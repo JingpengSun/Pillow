@@ -195,6 +195,24 @@ def get_features(audio,sr):
 
 if __name__ == '__main__':
 
+    
+    audio_dir ="/mnt/disk1/sjp/SPCdevkit/SPC2018/soundEvent6cls"
+
+    labels = {'sn':1, 'sp':2, 'cgh':3, 'kn':4, 'insp':5, 'exp':6}
+    filename_list = []
+    label_list = []
+    feature_list = []
+    for root, dirname, filenames in os.walk(audio_dir):
+        for filename in filenames:
+            label = filename.split('-',1)[0]
+            filename_list.append(filename)
+            label_list.append(labels[label])
+            audio_file = os.path.join(audio_dir,filename)
+            audio, sr = librosa.load(audio_file)
+            feature = get_feature(audio, sr)
+            feature_list.append(feature)
+    
+    
     reader = Audio('../data/snore/jingpeng', '141')
     feat = reader.get_feat_df(0.1, 0.05)
     
@@ -279,10 +297,13 @@ if __name__ == '__main__':
                'skew','kurtosis','mean-zcr']
     uid = filename_list
     label = label_list
-    rows = [          
-            ]
+    rows = np.hstack((uid.T,label.T,feature_set))
     
-    
+    file = open("features.csv","w",encoding="utf-8",newline='')
+    write = csv.writer(file)
+    write.writerow(headers)
+    write.writerows(rows)
+    file.close()
     
     
     
