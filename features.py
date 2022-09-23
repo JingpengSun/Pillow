@@ -178,6 +178,15 @@ def get_features(audio,sr):
     # 由于此时一阶与二阶范数等价，因此此处使用一阶范数
     middle_energy_ratio = np.linalg.norm(audio[len(audio)//3:-len(audio)//3], ord = 1)/np.linalg.norm(audio, ord = 1)
     
+    feature_set.append(mfccs)
+    feature_set.append(mfcc_delta)
+    feature_set.append(mfcc_delta2)
+    feature_set.append(mse_val)
+    feature_set.append(skew)
+    feature_set.append(kurtosis)
+    feature_set.append(mean_zcr)
+    
+    
     
     # 检查特征绝对值，决定是否进行特征归一化处理
     returen feature_set
@@ -244,6 +253,34 @@ if __name__ == '__main__':
     axes[1].scatter(fcm_centers[:,0], fcm_centers[:,1], marker="+", s=500, c='w')
     plt.savefig('clustering-output.jpg')
     plt.show()
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    headers = ['uid', 'label', 
+               'mfcc-2-mean','mfcc-3-mean','mfcc-4-mean','mfcc-5-mean','mfcc-6-mean','mfcc-7-mean','mfcc-8-mean','mfcc-9-mean',
+               'mfcc-10-mean','mfcc-11-mean','mfcc-12-mean','mfcc-13-mean','mfcc-14-mean','mfcc-15-mean','mfcc-16-mean', 'mfcc-17-mean',
+               'mfcc-18-mean','mfcc-19-mean','mfcc-20-mean',
+               'mfcc-delta-1-mean','mfcc-delta-2-mean','mfcc-delta-3-mean','mfcc-delta-4-mean','mfcc-delta-5-mean','mfcc-delta-6-mean',
+               'mfcc-delta-7-mean','mfcc-delta-8-mean','mfcc-delta-9-mean','mfcc-delta-10-mean','mfcc-delta-11-mean','mfcc-delta-12-mean',
+               'mfcc-delta-13-mean','mfcc-delta-14-mean','mfcc-delta-15-mean','mfcc-delta-16-mean','mfcc-delta-17-mean','mfcc-delta-18-mean',
+               'mfcc-delta-19-mean','mfcc-delta-20-mean',
+               'mfcc-delta2-1-mean','mfcc-delta2-2-mean','mfcc-delta2-3-mean','mfcc-delta2-4-mean','mfcc-delta2-5-mean','mfcc-delta2-6-mean',
+               'mfcc-delta2-7-mean','mfcc-delta2-8-mean','mfcc-delta2-9-mean','mfcc-delta2-10-mean','mfcc-delta2-11-mean','mfcc-delta2-12-mean',
+               'mfcc-delta2-13-mean','mfcc-delta2-14-mean','mfcc-delta2-15-mean','mfcc-delta2-16-mean','mfcc-delta2-17-mean','mfcc-delta2-18-mean',
+               'mfcc-delta2-19-mean','mfcc-delta2-20-mean',
+               'mse-1','mse-2','mse-3','mse-4','mse-5','mse-6','mse-7','mse-8','mse-9','mse-10',
+               'mse-11','mse-12','mse-13','mse-14','mse-15','mse-16','mse-17','mse-18','mse-19','mse-20',
+               'skew','kurtosis','mean-zcr']
+    uid = filename_list
+    label = label_list
+    rows = [          
+            ]
     
     
     
