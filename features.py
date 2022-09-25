@@ -22,6 +22,10 @@ import matplotlib; matplotlib.use('TkAgg')
 from fcmeans import FCM   # pip install fuzzy-c-means
 from sklearn.decomposition import PCA
 from mpl_toolkits.mplot3d import Axes3D
+from scipy import stats
+import os
+import csv
+
 
 class Audio:
     def __init__(self, path, uid, sfreq=16000):
@@ -118,6 +122,7 @@ def util_granulate_time_series(time_series, scale):
     Returns:
     Vector of coarse-grained time series with given scale factor
     """
+    time_series = time_series[0]
     n = len(time_series)
     b = int(np.fix(n/scale))
     temp = np.reshape(time_series[0:b * scale], (b,scale))
@@ -156,16 +161,17 @@ def get_features(audio,sr):
     # mfcc, zcr, 
     # mfcc刻画音频静态特征
     # mfcc的第一个分量与音频的振幅有关，因此为了排除振幅的干扰，可直接舍弃第一个分量
-    mfccs = np.mean(librosa.feature.mfcc(y=audio, sr=sr, hop_length=1024, n_mfcc=30)[1,:],axis=1)  # 提取mfcc特征个数为n_mfcc个 [n_mfcc, frames]
+    mfccs = librosa.feature.mfcc(y=audio, sr=sr, hop_length=1024, n_mfcc=30)  # 提取mfcc特征个数为n_mfcc个 [n_mfcc, frames]
+    mfccs_mean = np.mean(mfccs[1:,:], axis=1)
     # 平均后mfccs的维度为[n_mfcc-1,1]
     # mfcc的一阶和二阶导数，刻画音频动态特征
     mfcc_delta = np.mean(librosa.feature.delta(mfccs),axis=1)
     mfcc_delta2 = np.mean(librosa.feature.delta(mfccs,order=2),axis=1)
     zcr =librosa.feature.zero_crossing_rate(audio, frame_length=2048, hop_length=1024)  # 维度随声音事件长度而变化
-    mean_zcr = mean(zcr)
+    mean_zcr = np.mean(zcr)
     
     # multiscale entropy of zcr
-    mse_val = mse(zcr, sample_length=3, maxscale=20) 
+    mse_val = multiscale_entropy(zcr, sample_length=3, maxscale=20) 
     
     # 统计特征
     # 偏度与峰度，计算波形与正态分布的相似性
@@ -178,7 +184,7 @@ def get_features(audio,sr):
     # 由于此时一阶与二阶范数等价，因此此处使用一阶范数
     middle_energy_ratio = np.linalg.norm(audio[len(audio)//3:-len(audio)//3], ord = 1)/np.linalg.norm(audio, ord = 1)
     
-    feature_set.append(mfccs)
+    feature_set.append(mfccs_mean)
     feature_set.append(mfcc_delta)
     feature_set.append(mfcc_delta2)
     feature_set.append(mse_val)
@@ -189,7 +195,7 @@ def get_features(audio,sr):
     
     
     # 检查特征绝对值，决定是否进行特征归一化处理
-    returen feature_set
+    return feature_set
     
     
 
@@ -198,7 +204,7 @@ if __name__ == '__main__':
     
     audio_dir ="/mnt/disk1/sjp/SPCdevkit/SPC2018/soundEvent6cls"
 
-    labels = {'sn':1, 'sp':2, 'cgh':3, 'kn':4, 'insp':5, 'exp':6}
+    labels = {'snore':1, 'speech':2, 'cough':3, 'knock':4, 'insp':5, 'exp':6}
     filename_list = []
     label_list = []
     feature_list = []
@@ -208,8 +214,8 @@ if __name__ == '__main__':
             filename_list.append(filename)
             label_list.append(labels[label])
             audio_file = os.path.join(audio_dir,filename)
-            audio, sr = librosa.load(audio_file)
-            feature = get_feature(audio, sr)
+            audio, sr = librosa.load(audio_file,sr=None)
+            feature = get_features(audio, sr)
             feature_list.append(feature)
     
     
@@ -243,11 +249,11 @@ if __name__ == '__main__':
     X_new = pca.transform(X)
 #     print(X_new)
     # 画图显示数据
-    if decreased_dim == 2
+    if decreased_dim == 2:
         fig = plt.figure()
         plt.scatter(X_new[:, 0], X_new[:, 1], marker='o')
         plt.show()
-    elif decreased_dim == 3
+    elif decreased_dim == 3:
         # 三维画图
         fig = plt.figure()
         ax = Axes3D(fig, rect=[0, 0, 1, 1], elev=30, azim=20)
