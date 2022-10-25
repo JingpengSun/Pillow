@@ -14,9 +14,23 @@ def get_splited_event(feature, onset_frame, offset_frame, threshold1):
     return splited_onset, splited_offset
     
     
+def time2frame(event_time, hop_length):
+    frame_index = int(event_time//hop_length)
+    return frame_index
 
-
-def 
+def regression_onset_and_offset(feature, onset, offset, neighbor_duration):
+    # onset, 起始时刻，in seconds
+    # offset, 结束时刻
+    # neighbor_duration, 当前位置与相距neighbor_duration的点进行对比
+    # 具体来说，onset与其前后各neighbor_duration之间的关系，offset也是如此
+    onset_frame_index = time2frame(onset)
+    offset_frame_index = time2frame(offset)
+    hop_duration = neighbor_duration/2
+    nb_frame_num = time2frame(neighbor_duration)
+    feature[onset_frame_index-nb_frame_num]
+    
+    
+    
 
 
 
