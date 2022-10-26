@@ -8,7 +8,7 @@ def get_splited_event(feature, onset_frame, offset_frame, threshold1):
     threshold2 = 3*threshold1
     max_frame_silence = 5   # 静音时长达到5帧即认为是有效静音
     
-    onset_list, offset_list = sed_param1D(feature, max_frame_silence, threshold1, threshold2
+    onset_list, offset_list = sed_param1D(feature, max_frame_silence, threshold1, threshold2)
                                           
                                           
     return splited_onset, splited_offset
